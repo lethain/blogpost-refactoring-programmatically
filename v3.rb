@@ -1,21 +1,9 @@
-# using ruby_parser from https://github.com/seattlerb/ruby_parser
-# also ruby2ruby for convert sexps to ruby code: sudo gem install ruby2ruby
 require 'ruby_parser'
 require 'ruby2ruby'
 
-
 def rewrite(expr)
   if expr.is_a? Sexp
-    if expr[0] == :call
-      num_args = expr.slice(3, expr.size).size
-      if num_args == 2
-        snd = expr[4]
-        if snd[0] == :lit && snd[1] == 1
-          # remove the second value!
-          expr.pop()
-        end
-      end
-    elsif expr[0] == :for
+    if expr[0] == :for
       lst = expr[1]
       param = expr[2]
       func = expr[3]
@@ -25,9 +13,9 @@ def rewrite(expr)
       expr[2] = Sexp.new(:args, param[1])
       expr[3] = func
     end
-    expr.each do |x|
-      rewrite(x)
-    end
+
+    # descend into children
+    expr.each { |x| rewrite(x) }
   end
   expr
 end
@@ -45,4 +33,5 @@ rewritten = rewritten.split("\n").map do |line|
     line
   end
 end
+
 puts rewritten

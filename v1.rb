@@ -3,14 +3,10 @@
 require 'ruby_parser'
 require 'ruby2ruby'
 
-def load
-  txt = ''
-  while line = gets
-    txt += line
-  end
-  txt
+def rewrite(expr)
+  expr
 end
 
-
-#puts load
-puts ARGF.read
+parsed =  RubyParser.new.parse(ARGF.read)
+rewritten = Ruby2Ruby.new.process rewrite(parsed)
+puts rewritten
